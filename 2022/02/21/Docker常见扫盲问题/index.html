@@ -1,0 +1,521 @@
+
+
+<!DOCTYPE html>
+<html lang="en | zh-CN |zh-TW" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="John Doe">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Docker 常见扫盲问题  Docker 和虚拟机有啥不同？     答：Docker 是轻量级的沙盒，在其中运行的只是应用，虚拟机里面还有额外的系统。   Docker 安全么？答：Docker 利用了 Linux 内核中很多安全特性来保证不同容器之间的隔离，并且通过签名机制来对镜像进行验证。大量生产环境的部署证明，Docker 虽然隔离性无法与虚拟机相比，但仍然具有极高的安全性。    如何">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker常见扫盲问题">
+<meta property="og:url" content="http://blog.dabing.space/2022/02/21/Docker%E5%B8%B8%E8%A7%81%E6%89%AB%E7%9B%B2%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="锄禾">
+<meta property="og:description" content="Docker 常见扫盲问题  Docker 和虚拟机有啥不同？     答：Docker 是轻量级的沙盒，在其中运行的只是应用，虚拟机里面还有额外的系统。   Docker 安全么？答：Docker 利用了 Linux 内核中很多安全特性来保证不同容器之间的隔离，并且通过签名机制来对镜像进行验证。大量生产环境的部署证明，Docker 虽然隔离性无法与虚拟机相比，但仍然具有极高的安全性。    如何">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-02-21T08:12:06.000Z">
+<meta property="article:modified_time" content="2022-02-21T08:38:18.751Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  <title>Docker常见扫盲问题 - 锄禾</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hint.css@2/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"blog.dabing.space","root":"/","version":"1.8.14","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                Startseite
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                Archiv
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                Kategorie
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                Etiketten
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                Über mich
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Docker常见扫盲问题">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-02-21 16:12" pubdate>
+        February 21, 2022 pm
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3.3k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      28 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Docker常见扫盲问题</h1>
+            
+            <div class="markdown-body">
+              <h1 id="Docker-常见扫盲问题"><a href="#Docker-常见扫盲问题" class="headerlink" title="Docker 常见扫盲问题"></a>Docker 常见扫盲问题</h1><ol>
+<li> Docker 和虚拟机有啥不同？</li>
+</ol>
+<p>   答：Docker 是轻量级的沙盒，在其中运行的只是应用，虚拟机里面还有额外的系统。 </p>
+<ol start="2">
+<li><p>Docker 安全么？<br>答：Docker 利用了 Linux 内核中很多安全特性来保证不同容器之间的隔离，并且通过签名机制来对镜像进行验证。大量生产环境的部署证明，Docker 虽然隔离性无法与虚拟机相比，但仍然具有极高的安全性。 </p>
+</li>
+<li><p> 如何清理后台停止的容器？ </p>
+</li>
+</ol>
+<p>   答：可以使用 sudo docker rm $sudo( docker ps -a -q) 命令。 </p>
+<ol start="4">
+<li><p>如何查看镜像支持的环境变量？<br>答：可以使用 docker run IMAGE env 命令。 </p>
+</li>
+<li><p>当启动容器的时候提示：exec format error？如何解决问题<br>答：检查启动命令是否有可执行权限，进入容器手工运行脚本进行排查。 </p>
+</li>
+<li><p>本地的镜像文件都存放在哪里？<br>答：与 Docker 相关的本地资源都存放在/var/lib/docker/目录下，其中 container 目录存放容器信息，graph 目录存放镜像信息，aufs 目录下存放具体的内容文件。 </p>
+</li>
+<li><p>如何退出一个镜像的 bash，而不终止它？<br>答：按 Ctrl-p Ctrl-q。 </p>
+</li>
+<li><p>退出容器时候自动删除?<br>答：使用 –rm 选项，例如 sudo docker run –rm -it ubuntu </p>
+</li>
+<li><p>怎么快速查看本地的镜像和容器？<br>答：可以通过 docker images 来快速查看本地镜像；通过 docker ps -a 快速查看本<br>地容器。 </p>
+</li>
+</ol>
+<p>镜像相关： </p>
+<ol>
+<li><p>如何批量清理临时镜像文件？<br>答：可以使用 sudo docker rmi $(sudo docker images -q -f danging=true)命令 </p>
+</li>
+<li><p>如何查看镜像支持的环境变量？<br>答：使用 sudo docker run IMAGE env </p>
+</li>
+<li><p>本地的镜像文件都存放在哪里<br>答：于 Docker 相关的本地资源存放在/var/lib/docker/目录下，其中 container 目录<br>存放容器信息，graph 目录存放镜像信息，aufs 目录下存放具体的镜像底层文件。 </p>
+</li>
+<li><p>构建 Docker 镜像应该遵循哪些原则？<br>答：整体远侧上，尽量保持镜像功能的明确和内容的精简，要点包括：<br>l  尽量选取满足需求但较小的基础系统镜像，建议选择 debian:wheezy 镜像，仅有<br>86MB 大小<br>l  清理编译生成文件、安装包的缓存等临时文件<br>l  安装各个软件时候要指定准确的版本号，并避免引入不需要的依赖<br>l  从安全的角度考虑，应用尽量使用系统的库和依赖<br>l  使用 Dockerfile 创建镜像时候要添加.dockerignore 文件或使用干净的工作目录 </p>
+</li>
+</ol>
+<p>容器相关 </p>
+<ol>
+<li><p>容器退出后，通过 docker ps 命令查看不到，数据会丢失么？<br>答：容器退出后会处于终止（exited）状态，此时可以通过 docker ps -a 查看，其中数据不会丢失，还可以通过 docker start 来启动，只有删除容器才会清除数据。 </p>
+</li>
+<li><p>如何停止所有正在运行的容器？<br>答：使用 docker kill $(sudo docker ps -q) </p>
+</li>
+<li><p>如何清理批量后台停止的容器？<br>答：使用 docker rm $（sudo docker ps -a -q） </p>
+</li>
+<li><p>如何临时退出一个正在交互的容器的终端，而不终止它？<br>答：按 Ctrl+p，后按 Ctrl+q，如果按 Ctrl+c 会使容器内的应用进程终止，进而会使容器终止。 </p>
+</li>
+<li><p>很多应用容器都是默认后台运行的，怎么查看它们的输出和日志信息？<br>答：使用 docker logs，后面跟容器的名称或者 ID 信息 </p>
+</li>
+<li><p>使用 docker port 命令映射容器的端口时，系统报错 Error: No public port ‘80’ published for …，是什么意思？<br>答：创建镜像时 Dockerfile 要指定正确的 EXPOSE 的端口，容器启动时指定PublishAllport=true </p>
+</li>
+<li><p>可以在一个容器中同时运行多个应用进程吗？<br>答：一般不推荐在同一个容器内运行多个应用进程，如果有类似需求，可以通过额外的进程管理机制，比如 supervisord 来管理所运行的进程 </p>
+</li>
+<li><p>如何控制容器占用系统资源（CPU，内存）的份额？<br>答：在使用 docker  create 命令创建容器或使用 docker  run  创建并运行容器的时候，可以使用-c|–cpu-shares[=0]参数来调整同期使用 CPU 的权重，使用m|–memory参数来调整容器使用内存的大小。 </p>
+</li>
+</ol>
+<p>仓库相关 </p>
+<ol>
+<li><p>仓库（Repository）、注册服务器（Registry）、注册索引（Index）有何关系？<br>答：首先，仓库是存放一组关联镜像的集合，比如同一个应用的不同版本的镜像，注册服务器是存放实际的镜像的地方，注册索引则负责维护用户的账号，权限，搜索，标签等管理。注册服务器利用注册索引来实现认证等管理。 </p>
+</li>
+<li><p>从非官方仓库（如：<a href="http://dl.dockerpool.com）下载镜像的时候，有时候会提示“Error：Invaild">http://dl.dockerpool.com）下载镜像的时候，有时候会提示“Error：Invaild</a> registry endpoint <a target="_blank" rel="noopener" href="https://dl.docker.com:5000/v1/%E2%80%A6%E2%80%9D">https://dl.docker.com:5000/v1/…”</a>?<br>答：Docker 自 1.3.0 版本往后以来，加强了对镜像安全性的验证，需要手动添加对非官方仓库的信任。 DOCKER_OPTS=”–insecure-registry dl.dockerpool.com:5000”<br>重启 docker 服务 </p>
+</li>
+</ol>
+<p>配置相关 </p>
+<ol>
+<li><p>Docker 的配置文件放在那里。如何修改配置？<br>答：Ubuntu 系统下 Docker 的配置文件是/etc/default/docker，CentOS 系统配置文件存放在/etc/sysconfig/docker </p>
+</li>
+<li><p>如何更改 Docker 的默认存储设置？<br>答：Docker 的默认存放位置是/var/lib/docker,如果希望将 Docker 的本地文件存储到其他分区，可以使用 Linux 软连接的方式来做。 </p>
+</li>
+</ol>
+<p>Docker 与虚拟化 </p>
+<ol>
+<li><p>Docker 与 LXC（Linux Container）有何不同？<br>答：LXC 利用 Linux 上相关技术实现容器，Docker 则在如下的几个方面进行了改进：<br>l  移植性：通过抽象容器配置，容器可以实现一个平台移植到另一个平台；<br>l  镜像系统：基于 AUFS 的镜像系统为容器的分发带来了很多的便利，同时共同的<br>镜像层只需要存储一份，实现高效率的存储；<br>l  版本管理：类似于 GIT 的版本管理理念，用户可以更方面的创建、管理镜像文件；<br>l  仓库系统：仓库系统大大降低了镜像的分发和管理的成本；<br>l  周边工具：各种现有的工具（配置管理、云平台）对 Docker 的支持，以及基于<br>Docker 的 Pass、CI 等系统，让 Docker 的应用更加方便和多样化。 </p>
+</li>
+<li><p>Docker 与 Vagrant 有何不同？<br>答：两者的定位完全不同 Vagrant 类似于 Boot2Docker（一款运行 Docker 的最小内核），是一套虚拟机的管理环境，Vagrant 可以在多种系统上和虚拟机软件中运行，可以在 Windows。Mac等非 Linux 平台上为 Docker 支持，自身具有较好的包装性和移植性。 原生 Docker 自身只能运行在 Linux 平台上，但启动和运行的性能都比虚拟机要快，往往更适合快速开发和部署应用的场景。 </p>
+</li>
+<li><p>开发环境中 Docker 与 Vagrant 该如何选择？<br>答：Docker 不是虚拟机，而是进程隔离，对于资源的消耗很少，单一开发环境下Vagrant 是虚拟机上的封装，虚拟机本身会消耗资源。 </p>
+</li>
+</ol>
+<p>Other FAQ </p>
+<ol>
+<li><p>Docker 能在非 Linux 平台（Windows+MacOS）上运行吗？<br>答：可以 </p>
+</li>
+<li><p>如何将一台宿主机的 docker 环境迁移到另外一台宿主机？<br>答：停止 Docker 服务，将整个 docker 存储文件复制到另外一台宿主机上，然后调整另外一台宿主机的配置即可 </p>
+</li>
+<li><p>Docker 容器创建后，删除了/var/run/netns 目录下的网络名字空间文件，可以手动恢复它：<br>答：查看容器进程 ID，比如 1234 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><div class="code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><pre><code class="hljs shell">sudo docker inspect --format=&#x27;&#123;&#123;. State.pid&#125;&#125;&#x27; $container_id <br>1234 <br></code></pre></td></tr></table></figure>
+<p>到 proc 目录下，把对应的网络名字空间文件链接到/var/run/netns,然后通过正常的系统命令查看操作容器的名字空间。 </p>
+</li>
+</ol>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/02/21/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%8E%A2%E7%B4%A2/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">微服务探索</span>
+                        <span class="visible-mobile">Vorheriger</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/01/17/kubernetes1-23%E5%AE%89%E8%A3%85/">
+                        <span class="hidden-mobile">kubernetes1.23安装</span>
+                        <span class="visible-mobile">Nächster</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;TOC</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">Stichwort</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+        typing(title);
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

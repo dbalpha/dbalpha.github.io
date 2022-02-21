@@ -24,7 +24,7 @@
 <meta property="og:description" content="Docker 常见扫盲问题  Docker 和虚拟机有啥不同？     答：Docker 是轻量级的沙盒，在其中运行的只是应用，虚拟机里面还有额外的系统。   Docker 安全么？答：Docker 利用了 Linux 内核中很多安全特性来保证不同容器之间的隔离，并且通过签名机制来对镜像进行验证。大量生产环境的部署证明，Docker 虽然隔离性无法与虚拟机相比，但仍然具有极高的安全性。    如何">
 <meta property="og:locale">
 <meta property="article:published_time" content="2022-02-21T08:12:06.000Z">
-<meta property="article:modified_time" content="2022-02-21T11:04:49.869Z">
+<meta property="article:modified_time" content="2022-02-21T11:11:35.868Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary_large_image">
   
@@ -98,7 +98,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/">
                 <i class="iconfont icon-home-fill"></i>
-                Home
+                Startseite
               </a>
             </li>
           
@@ -110,7 +110,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/archives/">
                 <i class="iconfont icon-archive-fill"></i>
-                Archives
+                Archiv
               </a>
             </li>
           
@@ -122,7 +122,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/categories/">
                 <i class="iconfont icon-category-fill"></i>
-                Categories
+                Kategorie
               </a>
             </li>
           
@@ -134,7 +134,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/tags/">
                 <i class="iconfont icon-tags-fill"></i>
-                Tags
+                Etiketten
               </a>
             </li>
           
@@ -146,7 +146,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/about/">
                 <i class="iconfont icon-user-fill"></i>
-                About
+                Über mich
               </a>
             </li>
           
@@ -196,7 +196,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      3.3k 字
+      3.2k 字
     </span>
   
 
@@ -270,7 +270,14 @@
 </li>
 <li><p>本地的镜像文件都存放在哪里<br>答：于 Docker 相关的本地资源存放在/var/lib/docker/目录下，其中 container 目录<br>存放容器信息，graph 目录存放镜像信息，aufs 目录下存放具体的镜像底层文件。 </p>
 </li>
-<li><p>构建 Docker 镜像应该遵循哪些原则？<br>答：整体远侧上，尽量保持镜像功能的明确和内容的精简，要点包括：<br>l  尽量选取满足需求但较小的基础系统镜像，建议选择 debian:wheezy 镜像，仅有<br>86MB 大小<br>l  清理编译生成文件、安装包的缓存等临时文件<br>l  安装各个软件时候要指定准确的版本号，并避免引入不需要的依赖<br>l  从安全的角度考虑，应用尽量使用系统的库和依赖<br>l  使用 Dockerfile 创建镜像时候要添加.dockerignore 文件或使用干净的工作目录 </p>
+<li><p>构建 Docker 镜像应该遵循哪些原则？<br>答：整体远侧上，尽量保持镜像功能的明确和内容的精简，要点包括： </p>
+<ul>
+<li> 尽量选取满足需求但较小的基础系统镜像，建议选择 debian:wheezy 镜像，仅有86MB 大小 </li>
+<li> 清理编译生成文件、安装包的缓存等临时文件 </li>
+<li> 安装各个软件时候要指定准确的版本号，并避免引入不需要的依赖 </li>
+<li> 从安全的角度考虑，应用尽量使用系统的库和依赖 </li>
+<li> 使用 Dockerfile 创建镜像时候要添加.dockerignore 文件或使用干净的工作目录 </li>
+</ul>
 </li>
 </ol>
 <p>容器相关 </p>
@@ -308,7 +315,14 @@
 </ol>
 <p>Docker 与虚拟化 </p>
 <ol>
-<li><p>Docker 与 LXC（Linux Container）有何不同？<br>答：LXC 利用 Linux 上相关技术实现容器，Docker 则在如下的几个方面进行了改进：<br>l  移植性：通过抽象容器配置，容器可以实现一个平台移植到另一个平台；<br>l  镜像系统：基于 AUFS 的镜像系统为容器的分发带来了很多的便利，同时共同的<br>镜像层只需要存储一份，实现高效率的存储；<br>l  版本管理：类似于 GIT 的版本管理理念，用户可以更方面的创建、管理镜像文件；<br>l  仓库系统：仓库系统大大降低了镜像的分发和管理的成本；<br>l  周边工具：各种现有的工具（配置管理、云平台）对 Docker 的支持，以及基于<br>Docker 的 Pass、CI 等系统，让 Docker 的应用更加方便和多样化。 </p>
+<li><p>Docker 与 LXC（Linux Container）有何不同？<br>答：LXC 利用 Linux 上相关技术实现容器，Docker 则在如下的几个方面进行了改进： </p>
+<ul>
+<li> 移植性：通过抽象容器配置，容器可以实现一个平台移植到另一个平台； </li>
+<li> 镜像系统：基于 AUFS 的镜像系统为容器的分发带来了很多的便利，同时共同的镜像层只需要存储一份，实现高效率的存储； </li>
+<li> 版本管理：类似于 GIT 的版本管理理念，用户可以更方面的创建、管理镜像文件； </li>
+<li> 仓库系统：仓库系统大大降低了镜像的分发和管理的成本； </li>
+<li> 周边工具：各种现有的工具（配置管理、云平台）对 Docker 的支持，以及基于Docker 的 Pass、CI 等系统，让 Docker 的应用更加方便和多样化。 </li>
+</ul>
 </li>
 <li><p>Docker 与 Vagrant 有何不同？<br>答：两者的定位完全不同 Vagrant 类似于 Boot2Docker（一款运行 Docker 的最小内核），是一套虚拟机的管理环境，Vagrant 可以在多种系统上和虚拟机软件中运行，可以在 Windows。Mac等非 Linux 平台上为 Docker 支持，自身具有较好的包装性和移植性。 原生 Docker 自身只能运行在 Linux 平台上，但启动和运行的性能都比虚拟机要快，往往更适合快速开发和部署应用的场景。 </p>
 </li>
@@ -349,7 +363,7 @@
                       <a href="/2022/02/21/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%8E%A2%E7%B4%A2/">
                         <i class="iconfont icon-arrowleft"></i>
                         <span class="hidden-mobile">微服务探索</span>
-                        <span class="visible-mobile">Previous</span>
+                        <span class="visible-mobile">Vorheriger</span>
                       </a>
                     
                   </article>
@@ -358,7 +372,7 @@
                     
                       <a href="/2022/01/17/kubernetes1-23%E5%AE%89%E8%A3%85/">
                         <span class="hidden-mobile">kubernetes1.23安装</span>
-                        <span class="visible-mobile">Next</span>
+                        <span class="visible-mobile">Nächster</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
                     
@@ -401,7 +415,7 @@
   <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">Search</h4>
+        <h4 class="modal-title w-100 font-weight-bold">Suchen</h4>
         <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -410,7 +424,7 @@
         <div class="md-form mb-5">
           <input type="text" id="local-search-input" class="form-control validate">
           <label data-error="x" data-success="v"
-                 for="local-search-input">keyword</label>
+                 for="local-search-input">Stichwort</label>
         </div>
         <div class="list-group" id="local-search-result"></div>
       </div>
